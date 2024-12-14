@@ -115,7 +115,7 @@ def main():
                 print("Goodbye!... :)")
                 break
         except ValueError:
-            print("Invalid input, please enter a number please...")
+            print("Invalid input, please enter a number.")
 
 if __name__ == "__main__":
     main()
