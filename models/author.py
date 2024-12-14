@@ -41,4 +41,4 @@ class Author(BASE):
         return DB.query(cls).all()
     
     def __repr__(self)->str:
-        return f"<Author: {self.name}>"
+        return f"<Author: {self.Name}>"

@@ -44,4 +44,4 @@ class Article(BASE):
         return DB.query(cls).all()
     
     def __repr__(self)->str:
-        return f"<Article: {self.title}>"
+        return f"<Article: {self.Title}>"

@@ -2,7 +2,10 @@
 # ARTICLES SYSTEM - MAGAZINE,
 # BY ISRAEL MAFABI EMMANUEL
 
-from sqlalchemy import Column, Integer, String
+from models.author import Author
+from models.article import Article
+
+from sqlalchemy import Column, Integer, String, func
 from sqlalchemy.orm import Session, relationship
 from database.connection import BASE
 
@@ -36,39 +39,42 @@ class Magazine(BASE):
         return DB.query(cls).all()
     
     @classmethod
-    def get_contributing_authors(
+    def get_starred_authors(
         cls,
         DB:Session,
         magazine_id:int)->list:
-        #retrieving all the contributing authors...
-        magazine = DB.query(cls).filter(cls.MagazineID == magazine_id).first()
-        if not magazine:
-            return []
-        
-        authors:set = set()
-        for article in magazine.articles:
-            authors.add(article.author)
+        # retrieving all the contributing authors...
+        # starred contributors ⭐
+        authors:list = DB.query(
+            Author
+        ).join(
+            Article, Article.AuthorID == Author.AuthorID
+        ).filter(
+            Article.MagazineID == magazine_id
+        ).group_by(
+            Author.AuthorID
+        ).having(
+            func.count(Article.ArticleID) > 2
+        ).all()
 
-        return list(authors)
-    
+        return authors
+
     @classmethod
     def get_contributors(
         cls,
         DB:Session,
-        category:str = None)->list:
+        magazine_id:int)->list:
         # get the most contributing authors...
-        query = DB.query(cls)
-        if category and category.lower() != 'all':
-            query = query.filter(cls.Category == category)
+        authors:list = DB.query(
+            Author
+        ).join(
+            Article, Article.AuthorID == Author.AuthorID
+        ).filter(
+            Article.MagazineID == magazine_id
+        ).all()
 
-        magazines:list = query.all()
-        authors:set    = set()
-        for magazine in magazines:
-            for article in magazine.articles:
-                authors.add(article.author)
-
-        return list(authors)
+        return authors
 
     
     def __repr__(self)->str:
-        return f"<Magazine: {self.name}>"
+        return f"<Magazine: {self.Name}>"

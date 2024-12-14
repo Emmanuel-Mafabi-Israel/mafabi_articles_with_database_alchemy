@@ -3,7 +3,6 @@
 # BY ISRAEL MAFABI EMMANUEL
 
 import os
-import sys
 import platform
 
 from database.setup import create_tables
@@ -21,6 +20,7 @@ def main():
 
     # a function for creating a new article
     def new_article()->None:
+        print("----- New article ----- ")
         author_name:str       = input("Enter author's name: ")
         magazine_name:str     = input("Enter magazine's name: ")
         magazine_category:str = input("Enter magazine's category(Science, Tech...): ")
@@ -47,31 +47,69 @@ def main():
     def view_articles():
         articles:list = Article.get_articles(DB)
         for article in articles:
-            print(f"Title: {article.Title}, Content: {article.Content}, Author: {article.author.Name}, Magazine: {article.magazine.Name}")
+            print(f"Title: {article.Title} | Content: {article.Content} | Author: {article.author.Name} | Magazine: {article.magazine.Name}")
 
     # function for retrieving all the authors...
     def view_authors():
         authors:list = Author.get_authors(DB)
         for author in authors:
-            print(f"ID: {author.AuthorID}, Name: {author.Name}")
+            print(f"ID: {author.AuthorID} | Name: {author.Name}")
 
     # function for viewing contributors and contributing authors...
-    def contributors():
-        magazine_name:str     = input("Enter Magazine name: ")
-        magazine_category:str = input("Enter Magazine category(or 'All' for all categories): ")
-        magazine              = DB.query(Magazine).filter(Magazine.Name == magazine_name, Magazine.Category == magazine_category).first()
-        if not magazine:
-            print("Magazine not found!!!")
-            return
+    def all_contributors():
+        print("----- Contributors ----- ")
+        magazine_name:str     = input("Enter Magazine name: ").strip()
+        magazine_category:str = input("Enter Magazine category(or 'All' for all categories): ").strip()
         
-        # get the list of contributing authors...
-        contributors = Magazine.get_contributing_authors(DB, magazine.MagazineID)
-        if not contributors:
-            print("No contributing authors found... especially for this magazine.")
+        if magazine_category.lower() == "all":
+            magazines = DB.query(Magazine).filter(Magazine.Name.ilike(magazine_name)).all()
+        else: 
+            magazines = DB.query(Magazine).filter(Magazine.Name.ilike(magazine_name), Magazine.Category.ilike(magazine_category)).all()
+        
+        if magazines:
+            print(f"All contributors in {magazine_name}: ")
+            contributors_set:set = set()
+            for magazine in magazines:
+                contributors = Magazine.get_contributors(DB, magazine.MagazineID)
+                # print(f"Magazine: {magazine.Name}, Category: {magazine.Category}, Contributors: {contributors}") # Debug info
+                if contributors:
+                    contributors_set.update(contributors)
 
-        # otherwise... print the details of each contributing author...
-        for contributor in contributors:
-            print(f"ID: {contributor.AuthorID}, Name: {contributor.Name}")
+            if contributors_set:
+                for author in contributors_set:
+                    print(f"Author ID: {author.AuthorID} | Name: {author.Name}")
+            else:
+                print("No contributors found...")
+        else:
+            print("Magazine not found...")
+
+    # get the starred contributors ⭐⭐⭐
+    def starred_contributors():
+        print("----- Starred Contributors -----")
+        magazine_name:str     = input("Enter Magazine name: ").strip()
+        magazine_category:str = input("Enter Magazine category(or 'All' for all categories): ").strip()
+
+        if magazine_category.lower() == "all":
+            magazines = DB.query(Magazine).filter(Magazine.Name.ilike(magazine_name)).all()
+        else: 
+            magazines = DB.query(Magazine).filter(Magazine.Name.ilike(magazine_name), Magazine.Category.ilike(magazine_category)).all()
+        
+        if magazines:
+            print(f"All starred contributors in {magazine_name} - who have contributed more than twice: ")
+            starred_set:set = set()
+            for magazine in magazines:
+                starred = Magazine.get_starred_authors(DB, magazine.MagazineID)
+                # print(f"Magazine: {magazine.Name}, Category: {magazine.Category}, Contributors: {starred}") # Debug info
+                if starred:
+                    starred_set.update(starred)
+
+            if starred_set:
+                for author in starred_set:
+                    print(f"Author ID: {author.AuthorID} | Name: {author.Name} ⭐⭐⭐")
+            else:
+                print("No starred contributors found...")
+        else:
+            print("Magazine not found...")
 
     # function for viewing all the magazines logged
     def view_magazines():
@@ -87,29 +125,35 @@ def main():
             os.system('clear') # for macOS and Linux
 
     print("----- Welcome to Mafabi's Articles -----")
-    print("Please select an option below:")
-    print("1) Create new Article.")
-    print("2) View Articles.")
-    print("3) View all Authors.")
-    print("4) View contributing authors - (starred).")
-    print("5) View magazines.")
-    print("6) Clear the Screen.")
-    print("Otherwise, press any numeric key above or below selections to exit...")
+    def menu():
+        print("Please select an option below:")
+        print("1) Create new Article.")
+        print("2) View Articles.")
+        print("3) View all Authors.")
+        print("4) View contributions - all, for specific magazine.")
+        print("5) View starred authors - contributing authors.")
+        print("6) View magazines.")
+        print("7) Clear the Screen.")
+        print("Otherwise, press any numeric key above or below selections to exit...")
+
 
     while True:
+        menu()
         try:
             selection = int(input("Selection option: "))
-            if selection == 1:
+            if selection ==   1:
                 new_article()
             elif selection == 2:
                 view_articles()
             elif selection == 3:
                 view_authors()
             elif selection == 4:
-                contributors()
+                all_contributors()
             elif selection == 5:
-                view_magazines()
+                starred_contributors()
             elif selection == 6:
+                view_magazines()
+            elif selection == 7:
                 clear_screen()
             else:
                 print("Goodbye!... :)")
