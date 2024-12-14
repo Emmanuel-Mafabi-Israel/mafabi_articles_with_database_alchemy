@@ -18,14 +18,23 @@ def main():
     # a database session generator
     DB = next(get_db())
 
+    # sanitization done here...
+    def sanitize_input(prompt:str, min_length:int = 1)->str:
+        while True:
+            user_input:str = input(prompt).strip()
+            if len(user_input) >= min_length:
+                return user_input
+            else:
+                print(f"Input must be at least {min_length} character(s) looong...")
+
     # a function for creating a new article
     def new_article()->None:
         print("----- New article ----- ")
-        author_name:str       = input("Enter author's name: ")
-        magazine_name:str     = input("Enter magazine's name: ")
-        magazine_category:str = input("Enter magazine's category(Science, Tech...): ")
-        article_title:str     = input("Enter article Title: ")
-        article_content:str   = input("Enter article Content: ")
+        author_name:str       = sanitize_input("Enter author's name: ")
+        magazine_name:str     = sanitize_input("Enter magazine's name: ")
+        magazine_category:str = sanitize_input("Enter magazine's category(Science, Tech...): ")
+        article_title:str     = sanitize_input("Enter article Title: ")
+        article_content:str   = sanitize_input("Enter article Content: ")
 
         author:Author = DB.query(Author).filter(Author.Name == author_name).first()
         if not author:
@@ -115,7 +124,7 @@ def main():
     def view_magazines():
         magazines = Magazine.get_magazines(DB)
         for magazine in magazines:
-            print(f"ID: {magazine.MagazineID}, Name: {magazine.Name}, Category: {magazine.Category}")
+            print(f"ID: {magazine.MagazineID} | Name: {magazine.Name} | Category: {magazine.Category}")
 
     # function for clearing the screen
     def clear_screen():
