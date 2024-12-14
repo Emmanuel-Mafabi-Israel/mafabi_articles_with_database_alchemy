@@ -17,8 +17,8 @@ class Article(BASE):
     MagazineID:int = Column(Integer, ForeignKey('magazines.MagazineID'))
 
     # relationships -> the article connects these two (Author and Magazine 😉)
-    author   = relationship("Author")
-    magazine = relationship("Magazine")
+    author   = relationship("Author", back_populates="articles")
+    magazine = relationship("Magazine", back_populates="articles")
     
     @classmethod
     def create_article(

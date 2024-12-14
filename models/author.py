@@ -3,7 +3,7 @@
 # BY ISRAEL MAFABI EMMANUEL
 
 from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, relationship
 from database.connection import BASE
 class Author(BASE):
     __tablename__:str = "authors"
@@ -11,6 +11,8 @@ class Author(BASE):
     AuthorID:int  = Column(Integer, primary_key=True, index=True)
     Name:str      = Column(String, index=True, nullable=False)
     
+    articles = relationship("Article", back_populates="author")
+
     @classmethod
     def create_author(
         cls,
