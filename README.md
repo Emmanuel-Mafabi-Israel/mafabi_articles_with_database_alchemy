@@ -23,9 +23,9 @@ project-folder/
 │   └── magazine.py
 │
 ├── relationships/
-|   ├── relations.png
-|   └── relations.svg
-|
+│   ├── relations.png
+│   └── relations.svg
+│
 └── main.py
 ```
 
@@ -184,7 +184,7 @@ This is the main script for interacting with the database through a command-line
 
 ### **Relationships Diagram**
 
-![https://github.com/Emmanuel-Mafabi-Israel/mafabi_articles_with_database_alchemy/blob/main/relationships/relations.png?raw=true]()
+![relationships](relationships/relations.png)
 
 
 
