@@ -79,6 +79,8 @@ This file defines the Article model with attributes and relationships. An articl
 
 - An article is connected to an author and a magazine.
 
+  *"An article connects the author and the magazine* 😉*"*
+
 **Methods**:
 
 - `create_article`: Creates a new article.
@@ -185,8 +187,6 @@ This is the main script for interacting with the database through a command-line
 ### **Relationships Diagram**
 
 ![relationships](relationships/relations.png)
-
-
 
 ### **Enjoy the Project!!!**
 
