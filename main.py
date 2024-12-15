@@ -145,7 +145,6 @@ def main():
         print("7) Clear the Screen.")
         print("Otherwise, press any numeric key above or below selections to exit...")
 
-
     while True:
         menu()
         try:
