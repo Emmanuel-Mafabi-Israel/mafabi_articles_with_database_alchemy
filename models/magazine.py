@@ -64,7 +64,7 @@ class Magazine(BASE):
         cls,
         DB:Session,
         magazine_id:int)->list:
-        # get the most contributing authors...
+        # get all the contributing authors... 👌
         authors:list = DB.query(
             Author
         ).join(
